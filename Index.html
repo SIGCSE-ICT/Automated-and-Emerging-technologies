@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 6 — Automated and Emerging Technologies</title>
+<style>
+:root{
+  --bg:#07111f; --panel:#0e1b2e; --panel2:#13243b; --ink:#eef6ff; --muted:#b9c9dc;
+  --accent:#45d6c8; --accent2:#6aa8ff; --warn:#ffd166; --danger:#ff7b7b; --good:#7be495;
+  --line:#27415f; --shadow:0 18px 45px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 10% 0%,#102642 0,#07111f 45%,#050b14 100%);color:var(--ink);
+font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}
+button{font:inherit}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(7,17,31,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+display:flex;align-items:center;justify-content:space-between;padding:12px 20px}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+display:grid;place-items:center;color:#06101c;font-weight:900;font-size:20px}.brand small{display:block;color:var(--muted);font-size:12px}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 13px;border-radius:10px;cursor:pointer}
+.btn:hover{border-color:var(--accent);transform:translateY(-1px)} .btn.active{background:var(--accent);color:#07111f;border-color:var(--accent)}
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 67px)}
+aside{position:sticky;top:67px;height:calc(100vh - 67px);overflow:auto;border-right:1px solid var(--line);padding:22px 16px;background:rgba(7,17,31,.72)}
+.nav-title{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:8px 10px}
+.nav a{display:block;color:var(--muted);text-decoration:none;padding:10px 12px;border-radius:9px;margin:3px 0;font-weight:650}
+.nav a:hover,.nav a.current{background:var(--panel2);color:var(--ink)}
+main{max-width:1250px;width:100%;margin:auto;padding:34px 34px 80px}
+.hero{padding:44px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,rgba(69,214,200,.12),rgba(106,168,255,.08));box-shadow:var(--shadow);margin-bottom:28px}
+.kicker{color:var(--accent);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:13px}
+h1{font-size:clamp(38px,5vw,68px);line-height:1.03;margin:12px 0}.hero p{font-size:20px;color:var(--muted);max-width:900px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.pill{border:1px solid var(--line);padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.03);color:var(--muted)}
+section{scroll-margin-top:90px;margin:34px 0}.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px}
+h2{font-size:34px;margin:0} h3{font-size:23px;margin:20px 0 10px} h4{margin:12px 0 6px}
+.lead{font-size:18px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:linear-gradient(180deg,rgba(19,36,59,.9),rgba(14,27,46,.9));border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 25px rgba(0,0,0,.16)}
+.card strong{color:#fff}.muted{color:var(--muted)}
+.callout{border-left:5px solid var(--accent);background:rgba(69,214,200,.07);padding:16px 18px;border-radius:0 14px 14px 0;margin:16px 0}
+.warn{border-left-color:var(--warn);background:rgba(255,209,102,.07)}.danger{border-left-color:var(--danger);background:rgba(255,123,123,.07)}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:10px;margin:20px 0}.node{padding:18px;text-align:center;border-radius:16px;border:1px solid var(--line);background:var(--panel2);font-weight:800}.arrow{font-size:28px;color:var(--accent)}
+table{width:100%;border-collapse:collapse;background:rgba(10,21,36,.7);border-radius:14px;overflow:hidden}
+th,td{padding:13px 14px;border:1px solid var(--line);vertical-align:top}th{background:#172b46;text-align:left}td{color:#d8e5f3}
+.good{color:var(--good);font-weight:700}.bad{color:var(--danger);font-weight:700}
+.reveal{margin-top:10px}.answer{display:none;padding:14px 16px;background:#0a1626;border:1px dashed #3b6085;border-radius:12px;color:#dcecff}.answer.show{display:block}
+.q{padding:18px;border:1px solid var(--line);border-radius:16px;background:rgba(19,36,59,.6);margin:12px 0}.q p{margin:0 0 10px;font-weight:700}
+.option{display:block;width:100%;text-align:left;margin:7px 0;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0c192a;color:var(--ink);cursor:pointer}
+.option:hover{border-color:var(--accent)}.option.correct{border-color:var(--good);background:rgba(123,228,149,.1)}.option.wrong{border-color:var(--danger);background:rgba(255,123,123,.1)}
+.feedback{font-weight:700;margin-top:8px}
+.term{color:var(--accent);font-weight:800}
+.small{font-size:13px;color:var(--muted)}
+.accordion{border:1px solid var(--line);border-radius:14px;margin:10px 0;overflow:hidden}.acc-btn{width:100%;padding:15px 17px;background:var(--panel2);color:var(--ink);border:0;text-align:left;font-weight:800;cursor:pointer;display:flex;justify-content:space-between}.acc-body{display:none;padding:17px;background:rgba(10,21,36,.7)}.acc-body.open{display:block}
+.reflect .q{background:linear-gradient(135deg,rgba(106,168,255,.08),rgba(69,214,200,.05))}
+.scorebar{height:10px;background:#14263d;border-radius:999px;overflow:hidden;margin:8px 0}.scorefill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+.badge{display:inline-flex;padding:4px 8px;border-radius:7px;background:rgba(69,214,200,.1);border:1px solid #2e726c;color:var(--accent);font-size:12px;font-weight:800}
+footer{border-top:1px solid var(--line);padding:22px;color:var(--muted);font-size:13px}
+body.presentation main{max-width:1450px;padding-left:50px;padding-right:50px}body.presentation aside{display:none}body.presentation .layout{display:block}
+body.presentation .card{padding:26px}body.presentation h2{font-size:42px}body.presentation .lead{font-size:21px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}aside{display:none}.grid,.grid2{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center}main{padding:22px 16px}.hero{padding:28px}.topbar{position:relative}}
+@media print{aside,.topbar{display:none!important}body{background:#fff;color:#111}.card,.hero{box-shadow:none;border-color:#bbb;background:#fff}main{max-width:none}.answer{display:block}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">6</div><div><strong>Automated & Emerging Technologies</strong><small>Cambridge IGCSE / O Level Computer Science • Teaching Aid</small></div></div>
+  <div class="top-actions">
+    <button class="btn" id="presentBtn">Smartboard View</button>
+    <button class="btn" onclick="window.print()">Print</button>
+  </div>
+</header>
+
+<div class="layout">
+<aside>
+  <div class="nav-title">Chapter map</div>
+  <nav class="nav">
+    <a href="#overview">Overview</a>
+    <a href="#automated">6.1 Automated systems</a>
+    <a href="#applications">Automated applications</a>
+    <a href="#robotics">6.2 Robotics</a>
+    <a href="#roles">Roles & evaluation</a>
+    <a href="#ai">6.3 Artificial intelligence</a>
+    <a href="#expert">Expert systems</a>
+    <a href="#ml">Machine learning</a>
+    <a href="#compare">Big comparison</a>
+    <a href="#reflection">Self-reflection</a>
+    <a href="#quiz">Quick check</a>
+    <a href="#summary">Chapter summary</a>
+  </nav>
+  <div class="nav-title" style="margin-top:25px">Key terms</div>
+  <div class="card" style="padding:14px;font-size:13px">
+    Automated system<br>Sensor<br>Actuator<br>Controller<br>Robotics<br>Autonomous<br>End-effector<br>LiDaR<br>Artificial intelligence<br>Expert system<br>Inference engine<br>Knowledge base<br>Machine learning
+  </div>
+</aside>
+
+<main>
+<section class="hero" id="overview">
+  <div class="kicker">Chapter 6</div>
+  <h1>Automated and<br>Emerging Technologies</h1>
+  <p>A visual teaching aid covering automated systems, robotics and artificial intelligence, with worked examples, comparisons, exam-focused thinking and self-reflection questions with answers.</p>
+  <div class="pills"><span class="pill">6.1 Automated systems</span><span class="pill">6.2 Robotics</span><span class="pill">6.3 Artificial intelligence</span><span class="pill">Smartboard-ready</span></div>
+</section>
+
+<section>
+<div class="section-head"><div><h2>Chapter at a glance</h2><p class="lead">The three ideas connect, but they are not the same thing.</p></div></div>
+<div class="grid">
+  <div class="card"><span class="badge">6.1</span><h3>Automated systems</h3><p>Hardware and software designed to work automatically. The central pattern is <strong>sensor → processor/controller → actuator</strong>, often with human monitoring.</p></div>
+  <div class="card"><span class="badge">6.2</span><h3>Robotics</h3><p>The branch of computer science concerned with the <strong>design, construction and operation of robots</strong>. Robots sense, move and are programmable.</p></div>
+  <div class="card"><span class="badge">6.3</span><h3>Artificial intelligence</h3><p>Computer simulation of intelligent human behaviour, including the ability to <strong>reason, learn and adapt</strong> to external stimuli.</p></div>
+</div>
+<div class="callout"><strong>Core distinction:</strong> Automation describes a system operating automatically; robotics focuses on robots; AI focuses on intelligent behaviour. A robot does not automatically have AI.</div>
+</section>
+
+<section id="automated">
+<div class="section-head"><div><h2>6.1 Automated systems</h2><p class="lead">The control loop behind many real-world automated processes.</p></div></div>
+<div class="flow">
+  <div class="node">SENSORS<br><span class="small">take readings from surroundings</span></div><div class="arrow">→</div>
+  <div class="node">MICROPROCESSOR / COMPUTER<br><span class="small">processes data + applies programmed action</span></div><div class="arrow">→</div>
+  <div class="node">ACTUATORS<br><span class="small">produce physical output</span></div>
+</div>
+<div class="grid2">
+  <div class="card"><h3>Sensor</h3><p>An input device that takes readings from its surroundings and sends data to a microprocessor or computer. Analogue data may first be converted to digital form by an <strong>ADC</strong>.</p></div>
+  <div class="card"><h3>Actuator</h3><p>A device controlled by signals from the computer/microprocessor. It can operate motors, wheels, solenoids, pumps, valves, heaters, pistons and similar mechanisms.</p></div>
+</div>
+<div class="card" style="margin-top:16px"><h3>Worked control example: adaptive cruise control</h3>
+<p>The driver sets a cruising speed. Lasers in the bumpers send signals; the reflected signal helps the on-board computer calculate distance to the vehicle ahead. If the distance becomes too small, actuators apply brakes and/or reduce throttle. If the distance is safe, the computer checks whether the current speed equals the set speed and adjusts the throttle if necessary.</p>
+<div class="flow"><div class="node">Measure distance</div><div class="arrow">→</div><div class="node">Is distance safe?</div><div class="arrow">→</div><div class="node">Brake / throttle</div></div>
+</div>
+</section>
+
+<section id="applications">
+<div class="section-head"><div><h2>Automated applications</h2><p class="lead">Examples from the chapter, organised around sensors, processing and action.</p></div></div>
+<div class="accordion"><button class="acc-btn">Nuclear power station <span>＋</span></button><div class="acc-body">
+<p>A distributed control system (DCS) receives data from temperature, pressure, flow level, gas-escape and radiation sensors. It consults operational data/parameters and can signal actuators to operate pumps, valves or automatic shutdown. A supervisor can monitor the process remotely and override the DCS.</p>
+<p><strong>Why automate?</strong> Fast action, increased safety, optimum operating conditions and reduced long-term staffing costs. <strong>Risks:</strong> high setup/testing cost, unforeseen conditions, cyberattack exposure and enhanced maintenance.</p>
+</div></div>
+<div class="accordion"><button class="acc-btn">Paracetamol manufacture <span>＋</span></button><div class="acc-body">
+<p>Sensors monitor manufacturing and tablet-making processes. A central computer checks whether conditions remain within required parameters and sends signals to pumps, valves, heaters, stirrers or pistons. A remote operator can monitor and override the system.</p>
+<p><strong>Benefits:</strong> faster action, safety, optimum conditions, efficient material use, higher productivity and consistent results.</p>
+</div></div>
+<div class="accordion"><button class="acc-btn">Automatic irrigation <span>＋</span></button><div class="acc-body">
+<p>An automatic weather station sends data to a controller. Ultrasonic water-level sensors monitor irrigation channels; wireless transmitters/receivers carry the information to the controller. The controller decides whether water pumps should start or stop and actuators operate the pumps. A remote supervisor can override the controller.</p>
+<p><strong>Benefits:</strong> lower labour costs, efficient water control, faster response, safety and different programmed conditions for different crops. <strong>Limitations:</strong> expensive setup, high maintenance and dependence on functioning water channels.</p>
+</div></div>
+<div class="accordion"><button class="acc-btn">Automated weather station <span>＋</span></button><div class="acc-body">
+<p>Typical sensors include a thermometer, anemometer, hygrometer, barometer, level sensor and light sensor. A microprocessor reads and processes the sensor data, with values stored in a central database. A tipping-bucket rain gauge can use an actuator to tip collected water at a predetermined interval.</p>
+</div></div>
+<div class="accordion"><button class="acc-btn">Gaming and lighting <span>＋</span></button><div class="acc-body">
+<p>Gaming can use accelerometers to detect acceleration/deceleration and tilt, and proximity sensors in touch pads. Automated lighting can use light sensors, motion/infrared sensors and a microprocessor to control lights and fountain pumps. Benefits include automatic control, reduced energy use and longer bulb life; disadvantages include setup and maintenance cost and, for wireless systems, possible reliability issues.</p>
+</div></div>
+<div class="accordion"><button class="acc-btn">Scientific laboratory process <span>＋</span></button><div class="acc-body">
+<p>In the pharmaceutical laboratory example, level sensors and a colorimeter send readings to a microprocessor. The microprocessor controls an actuator operating a tap so that one chemical is added automatically. The process can provide repeatable results, faster parallel experiments and reduced exposure to hazardous chemicals.</p>
+</div></div>
+</section>
+
+<section id="robotics">
+<div class="section-head"><div><h2>6.2 Robotics</h2><p class="lead">Robots combine sensing, movement and programmable control.</p></div></div>
+<div class="grid">
+<div class="card"><h3>1 · Sense</h3><p>Sensors such as light, pressure, temperature and acoustic sensors gather information about the environment. Sensor data is sent to a microprocessor or computer.</p></div>
+<div class="card"><h3>2 · Move</h3><p>Wheels, cogs, pistons, gears, motors, hydraulic components and actuators allow turning, twisting, moving, gripping or lifting. <strong>End-effectors</strong> provide task-specific attachments.</p></div>
+<div class="card"><h3>3 · Programmable</h3><p>A controller acts as the robot's “brain”. It uses programmed instructions and information from sensors/cameras to determine actions.</p></div>
+</div>
+<div class="callout warn"><strong>Important:</strong> Robotics and AI are not identical. Many robots perform repetitive tasks and do not possess artificial intelligence. Software bots such as search-engine WebCrawlers and chatbots are not physical robots under the chapter's definition.</div>
+<h3>Independent vs dependent robots</h3>
+<table>
+<tr><th>Independent / autonomous</th><th>Dependent</th></tr>
+<tr><td>No direct human control; can carry out the human activity totally on its own.</td><td>A human interfaces directly with the robot, often through a computer or control panel.</td></tr>
+<tr><td>Example: an autonomous vehicle.</td><td>Example: humans and robots working together in a car assembly plant.</td></tr>
+</table>
+</section>
+
+<section id="roles">
+<div class="section-head"><div><h2>Roles of robots</h2><p class="lead">Applications, strengths and limitations across the chapter.</p></div></div>
+<table>
+<tr><th>Area</th><th>Examples from the chapter</th><th>Key advantages</th><th>Key disadvantages / concerns</th></tr>
+<tr><td><strong>Industry</strong></td><td>Welding, spray painting, microchip/electrical manufacture, warehouses.</td><td>Hazardous work; 24/7 operation; productivity; consistency; repetitive tasks suit robots.</td><td>Non-standard tasks can be difficult; unemployment/deskilling; high purchase/setup cost.</td></tr>
+<tr><td><strong>Transport</strong></td><td>Autonomous cars, trains, pilotless-aircraft concepts.</td><td>Reduced human error; potential efficiency; reduced congestion/travel time; automated parking.</td><td>Hacking; software glitches; sensor failure; maintenance; public reluctance; employment impacts.</td></tr>
+<tr><td><strong>Agriculture</strong></td><td>Harvesting, weed control, phenotyping, seed planting, fertiliser distribution.</td><td>Accuracy; speed; higher yields; reduced waste/labour; monitoring plant health.</td><td>Equipment and maintenance costs; dependence on sensing, connectivity and reliable operation.</td></tr>
+<tr><td><strong>Medicine</strong></td><td>Surgery, patient monitoring, blood sampling, microbots, prosthetic limbs.</td><td>Safer/faster procedures; less painful blood sampling; frees skilled staff; targeted therapy.</td><td>High dependence on correct sensing/control and appropriate use.</td></tr>
+<tr><td><strong>Domestic</strong></td><td>Vacuum cleaners, grass cutters, personal assistants.</td><td>Automatic chores; obstacle avoidance; programmable operation; voice interaction.</td><td>Depends on sensors, cameras, microprocessors, actuators and connectivity.</td></tr>
+<tr><td><strong>Entertainment</strong></td><td>Theme-park robots, camera robots, humanoid/stunt robots, synchronised effects.</td><td>Precision, speed and coordination beyond human capability; realistic effects.</td><td>Cost/complexity and dependence on accurate control.</td></tr>
+</table>
+<div class="card" style="margin-top:16px"><h3>Autonomous vehicle snapshot</h3>
+<p>Autonomous cars use sensors, cameras, actuators and microprocessors. Cameras provide visual data; radar and ultrasonics can help construct a 3D image of surroundings. Actuators can change gear, apply brakes and turn the steering wheel. Autonomous trains can additionally use LiDaR, proximity sensors, cameras and GPS.</p></div>
+</section>
+
+<section id="ai">
+<div class="section-head"><div><h2>6.3 Artificial intelligence (AI)</h2><p class="lead">From simulated human behaviour to systems that reason, learn and adapt.</p></div></div>
+<div class="card">
+<h3>Definition</h3>
+<p><strong>Artificial intelligence</strong> is a branch of computer science dealing with the simulation of intelligent human behaviour by a computer. The chapter relates this to cognitive functions such as acquiring knowledge and understanding through thought, experience and the five senses, with benchmarks including reasoning, speech and sight.</p>
+</div>
+<div class="grid3"></div>
+<div class="grid" style="margin-top:16px">
+<div class="card"><span class="badge">Narrow AI</span><h3>One specific task</h3><p>A machine has superior performance to a human when doing one specific task.</p></div>
+<div class="card"><span class="badge">General AI</span><h3>Human-like performance</h3><p>A machine is similar, rather than superior, in performance to a human doing a specific task.</p></div>
+<div class="card"><span class="badge">Strong AI</span><h3>Many tasks</h3><p>A machine has superior performance to a human in many tasks.</p></div>
+</div>
+<h3>AI characteristics</h3>
+<div class="grid">
+<div class="card"><strong>Reasoning</strong><p>Drawing reasoned conclusions from given data or situations.</p></div>
+<div class="card"><strong>Learning</strong><p>Using experience/data to improve future performance.</p></div>
+<div class="card"><strong>Adaptation</strong><p>Responding to external stimuli and new data; AI can identify patterns and make predictions.</p></div>
+</div>
+<h3>Examples named in the chapter</h3>
+<div class="pills"><span class="pill">Live-news generation</span><span class="pill">Smart home devices</span><span class="pill">Chatbots</span><span class="pill">Autonomous cars</span><span class="pill">Facial-expression recognition</span></div>
+</section>
+
+<section id="expert">
+<div class="section-head"><div><h2>Expert systems</h2><p class="lead">AI that mimics human expert knowledge and decision-making.</p></div></div>
+<div class="flow">
+<div class="node">USER INTERFACE<br><span class="small">questions / responses</span></div><div class="arrow">→</div>
+<div class="node">INFERENCE ENGINE<br><span class="small">matches + reasons</span></div><div class="arrow">→</div>
+<div class="node">KNOWLEDGE + RULES<br><span class="small">facts + IF rules</span></div>
+</div>
+<div class="grid2">
+<div class="card"><h3>Knowledge base</h3><p>A repository of facts, represented as objects and attributes. Example categories include animals, illnesses or other areas of expertise.</p></div>
+<div class="card"><h3>Rules base</h3><p>A set of inference rules used by the inference engine to draw conclusions, often using <strong>IF … THEN</strong> logic.</p></div>
+<div class="card"><h3>Inference engine</h3><p>The main processing element. It examines the knowledge base for matches and asks questions based on earlier responses.</p></div>
+<div class="card"><h3>Explanation system</h3><p>Explains the reasoning behind conclusions and recommendations. The chapter notes this is not explicitly covered in the syllabus, but it appears in the typical structure.</p></div>
+</div>
+<div class="callout"><strong>Example reasoning:</strong> IF continent = “South America” AND language = “Portuguese” THEN country = “Brazil”. The rules base provides the inference rule; the inference engine applies it to information supplied by the user.</div>
+<h3>Expert-system strengths and limitations</h3>
+<div class="grid2">
+<div class="card"><h3 class="good">Advantages</h3><ul><li>High level of expertise and accuracy</li><li>Consistent results</li><li>Stores large amounts of facts</li><li>Traceable logical solutions/diagnostics</li><li>Fast response times</li><li>Can provide probability of a suggested solution</li></ul></div>
+<div class="card"><h3 class="bad">Disadvantages</h3><ul><li>Users need considerable training</li><li>High setup and maintenance costs</li><li>Responses can be “cold” in some situations</li><li>Only as good as the facts entered</li><li>Users may wrongly assume the system is infallible</li></ul></div>
+</div>
+</section>
+
+<section id="ml">
+<div class="section-head"><div><h2>Machine learning & deep learning</h2><p class="lead">Learning from examples rather than writing a separate rule for every new case.</p></div></div>
+<div class="card"><h3>Machine learning</h3><p>Machine learning is a subset of AI in which algorithms are <strong>trained</strong> and learn from past experiences and examples. The chapter describes training computers with sample data so they can make predictions about new unseen data without being specifically programmed for every new case.</p></div>
+<div class="flow">
+<div class="node">Large amounts<br>of data</div><div class="arrow">→</div>
+<div class="node">Train the<br>model</div><div class="arrow">→</div>
+<div class="node">Test with<br>known data</div>
+</div>
+<div class="flow">
+<div class="node">If output is not accurate</div><div class="arrow">→</div>
+<div class="node">Refine model<br>(e.g. nodes/layers)</div><div class="arrow">→</div>
+<div class="node">Reliable / consistent output</div>
+</div>
+<div class="card">
+<h3>Deep learning extension in the chapter</h3>
+<p>Deep learning uses layered artificial neural networks: an input layer, hidden layer(s) and an output layer. The hidden layers process input data into information sent towards the output. The chapter uses complex visual processing as an example, including recognition of objects from patterns in pixel data.</p>
+</div>
+<div class="callout warn"><strong>Key dependency:</strong> AI can access large amounts of data and find patterns that humans might miss, but AI is dependent on the data used to train it.</div>
+</section>
+
+<section id="compare">
+<div class="section-head"><div><h2>Big comparison</h2><p class="lead">A single screen for the distinctions students often confuse.</p></div></div>
+<table>
+<tr><th>Concept</th><th>Core idea</th><th>Typical components / features</th><th>Key exam distinction</th></tr>
+<tr><td><strong>Automated system</strong></td><td>Operates automatically according to programmed control.</td><td>Sensors, microprocessor/computer, actuators, software; may have human monitoring.</td><td>Focus on the sensor → processor → actuator interaction.</td></tr>
+<tr><td><strong>Robot</strong></td><td>Mechanical device capable of tasks normally done by humans.</td><td>Sensing, movement, controller/programming, actuators, end-effectors.</td><td>Not every robot has AI; many perform repetitive tasks.</td></tr>
+<tr><td><strong>AI</strong></td><td>Simulates intelligent human behaviour.</td><td>Rules/data, reasoning, learning, adaptation; may support expert systems or machine learning.</td><td>Focus on intelligent behaviour rather than simply physical movement.</td></tr>
+<tr><td><strong>Expert system</strong></td><td>Mimics human expert knowledge/decision-making.</td><td>User interface, inference engine, knowledge base, rules base, explanation system.</td><td>Uses stored knowledge + inference rules to reach conclusions.</td></tr>
+<tr><td><strong>Machine learning</strong></td><td>Algorithms learn from examples/past experience.</td><td>Training data, model, testing, refinement.</td><td>New data can be handled through learned patterns rather than individually programmed rules.</td></tr>
+</table>
+</section>
+
+<section id="reflection" class="reflect">
+<div class="section-head"><div><h2>Self-reflection questions — with answers</h2><p class="lead">Conceptual prompts for checking understanding.</p></div></div>
+
+<div class="q"><p>1. Why is a sensor not enough to make an automated system work?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> A sensor only gathers input data. The microprocessor/computer must process that data and determine an action, and actuators are needed to carry out physical actions where required.</div></div>
+<div class="q"><p>2. In a nuclear power station, why can a human supervisor still be present if the system is fully automated?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> The supervisor can monitor the process and override the DCS if necessary. This is important because conditions not considered during testing may occur and computerised systems can also face security risks.</div></div>
+<div class="q"><p>3. What is the difference between an actuator and a sensor?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> A sensor is an input device that gathers information from the surroundings. An actuator receives a control signal and produces a physical action such as moving a motor, operating a valve or applying a brake.</div></div>
+<div class="q"><p>4. Why is an automated weather station useful in a remote region?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> It can automatically gather and store weather data without requiring people to be physically present. It can use a range of sensors and transmit/process the data regularly.</div></div>
+<div class="q"><p>5. Give the three characteristics that allow a device to be called a robot in this chapter.</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> It can sense its surroundings, it has a degree of movement, and it is programmable through a controller.</div></div>
+<div class="q"><p>6. Why is a robot not necessarily an AI system?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> Many robots perform programmed, repetitive tasks. AI is concerned with simulating intelligent behaviour, including reasoning, learning and adaptation. A robot may have sensors and movement without having adaptive AI.</div></div>
+<div class="q"><p>7. What is the difference between an independent and a dependent robot?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> An independent/autonomous robot has no direct human control and can carry out the human activity on its own. A dependent robot has a human interface and supplements rather than totally replaces human activity.</div></div>
+<div class="q"><p>8. How does an autonomous car use sensors, a processor and actuators together?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> Cameras, radar and ultrasonics collect information about the surroundings. The microprocessor processes the data and determines an action. Actuators then perform actions such as changing gear, applying brakes or turning the steering wheel.</div></div>
+<div class="q"><p>9. What makes an expert system different from a general database?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> An expert system uses a knowledge base together with inference rules and an inference engine to reason from user-provided information and reach conclusions or recommendations.</div></div>
+<div class="q"><p>10. What is the role of the inference engine?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> It is the main processing element. It asks questions, examines the knowledge base for matching information and applies the inference rules to draw conclusions.</div></div>
+<div class="q"><p>11. Why can an expert system produce an incorrect conclusion?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> The system is only as good as the information/facts entered into it. Incorrect, incomplete or unsuitable knowledge can therefore lead to an incorrect result.</div></div>
+<div class="q"><p>12. What is machine learning in one sentence?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> It is a subset of AI in which algorithms are trained using sample data and learn from past experience/examples so they can make predictions about new unseen data.</div></div>
+<div class="q"><p>13. Why is testing important in a machine-learning system?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> Known labelled data can be used to check whether the model gives accurate responses. If the output is not sufficiently accurate, the model can be refined until satisfactory results are obtained.</div></div>
+<div class="q"><p>14. A factory robot is accurate but cannot handle a cracked windscreen during fitting. What does this illustrate?</p><button class="btn reveal" onclick="toggle(this)">Reveal answer</button><div class="answer"><strong>Answer:</strong> Robots are well suited to standard, repetitive tasks, but they can have difficulty with non-standard tasks and variable circumstances that require flexible human judgement.</div></div>
+</section>
+
+<section id="quiz">
+<div class="section-head"><div><h2>Quick check</h2><p class="lead">Instant-response questions.</p></div><div><span class="badge" id="scoreText">0 / 8</span></div></div>
+<div class="scorebar"><div class="scorefill" id="scoreFill"></div></div>
+<div id="quizBox"></div>
+</section>
+
+<section id="summary">
+<div class="section-head"><div><h2>Chapter summary</h2><p class="lead">The essential ideas to retain.</p></div></div>
+<div class="grid2">
+<div class="card"><h3>Automated systems</h3><ul><li>Sensor input is processed by a microprocessor/computer.</li><li>Actuators carry out physical actions.</li><li>Automation is used in industry, transport, agriculture, weather, gaming, lighting and science.</li><li>Advantages and disadvantages depend on the scenario.</li></ul></div>
+<div class="card"><h3>Robotics</h3><ul><li>Robotics covers design, construction and operation of robots.</li><li>Robots sense, move and are programmable.</li><li>Robots may be independent/autonomous or dependent.</li><li>Many robots do not have AI.</li></ul></div>
+<div class="card"><h3>AI</h3><ul><li>AI simulates intelligent human behaviour.</li><li>Key characteristics: reasoning, learning and adaptation.</li><li>The chapter distinguishes narrow, general and strong AI.</li><li>Examples include smart devices, chatbots, autonomous cars and facial-expression recognition.</li></ul></div>
+<div class="card"><h3>AI systems</h3><ul><li>Expert systems use a knowledge base, rules base and inference engine.</li><li>Machine learning trains algorithms from data and past examples.</li><li>Deep learning uses layered artificial neural networks as an extension topic.</li><li>AI depends on the data used to train it.</li></ul></div>
+</div>
+<div class="callout"><strong>Exam-thinking anchor:</strong> When a question describes a new automated or robotic scenario, identify <strong>what is sensed → what the processor decides → what the actuator does</strong>, then evaluate scenario-specific advantages and disadvantages.</div>
+</section>
+
+<footer>
+<strong>Source basis:</strong> Cambridge IGCSE and O Level Computer Science, Second Edition, David Watson & Helen Williams, Chapter 6 “Automated and emerging technologies”, pp. 217–252 of the supplied PDF. The website content is organised and reformatted as a classroom teaching aid; terminology and examples are grounded in the supplied chapter.
+</footer>
+</main>
+</div>
+
+<script>
+function toggle(btn){
+  const a=btn.nextElementSibling;
+  a.classList.toggle('show');
+  btn.textContent=a.classList.contains('show')?'Hide answer':'Reveal answer';
+}
+document.querySelectorAll('.acc-btn').forEach(b=>b.addEventListener('click',()=>{
+  const body=b.nextElementSibling; body.classList.toggle('open');
+  b.querySelector('span').textContent=body.classList.contains('open')?'−':'＋';
+}));
+document.getElementById('presentBtn').addEventListener('click',()=>{
+  document.body.classList.toggle('presentation');
+  document.getElementById('presentBtn').classList.toggle('active');
+});
+const questions=[
+ {q:"Which component first receives readings from the surroundings?",o:["Actuator","Sensor","Inference engine","End-effector"],a:1},
+ {q:"Which component processes sensor data and decides what action is needed?",o:["Microprocessor/computer","Sensor","Pump","End-effector"],a:0},
+ {q:"Which is a characteristic of a robot?",o:["Must always use AI","Must sense, move and be programmable","Must be controlled remotely","Must be humanoid"],a:1},
+ {q:"Which statement is correct?",o:["All robots have AI","AI only exists in physical robots","Many robots do not possess AI","Chatbots are physical robots"],a:2},
+ {q:"What is the main processing element of an expert system?",o:["Knowledge base","Inference engine","Sensor","Actuator"],a:1},
+ {q:"What does the knowledge base contain?",o:["Physical motors","A repository of facts","Only sensor readings","Only user passwords"],a:1},
+ {q:"Machine learning trains algorithms using:",o:["Only fixed IF statements","Sample data and past examples","Only human operators","Only actuators"],a:1},
+ {q:"If a trained model is not accurate enough, the chapter describes:",o:["Deleting all data","Refining the model","Removing the sensors","Replacing the computer with an actuator"],a:1}
+];
+let score=0, answered=new Set();
+const box=document.getElementById('quizBox');
+questions.forEach((x,i)=>{
+ const q=document.createElement('div');q.className='q';
+ q.innerHTML='<p>'+(i+1)+'. '+x.q+'</p>';
+ x.o.forEach((op,j)=>{
+  const b=document.createElement('button');b.className='option';b.textContent=op;
+  b.onclick=()=>{
+   if(answered.has(i))return; answered.add(i);
+   const ok=j===x.a; if(ok)score++;
+   b.classList.add(ok?'correct':'wrong');
+   if(!ok)q.querySelectorAll('.option')[x.a].classList.add('correct');
+   const f=document.createElement('div');f.className='feedback';f.textContent=ok?'✓ Correct':'✗ Review the highlighted correct answer';
+   f.style.color=ok?'var(--good)':'var(--danger)';q.appendChild(f);
+   document.getElementById('scoreText').textContent=score+' / '+questions.length;
+   document.getElementById('scoreFill').style.width=(score/questions.length*100)+'%';
+  };
+  q.appendChild(b);
+ });
+ box.appendChild(q);
+});
+const links=[...document.querySelectorAll('.nav a')];
+const sections=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.remove('current'));const l=links.find(a=>a.getAttribute('href')==='#'+e.target.id);if(l)l.classList.add('current')}}),{rootMargin:'-25% 0px -65% 0px'});
+sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
